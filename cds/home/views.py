@@ -39,7 +39,7 @@ def prediction(request):
             result = predict_tumor(image)
 
             # Add training data
-            training_data = TrainingData(image=image, result=result)
+            training_data = TrainingData(image=image, prediction_result=str(result))
             training_data.save()
 
             return render(request, 'home/cancer.html', {'result': result})
@@ -47,3 +47,4 @@ def prediction(request):
         form = TumorDetectionForm()
 
     return render(request, 'home/cancer.html', {'form': form})
+
