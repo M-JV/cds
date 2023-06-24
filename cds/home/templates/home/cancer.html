@@ -64,17 +64,17 @@
   </nav>
 
   <h1>Brain Tumor Detection</h1>
-    <form action="/prediction" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="image" accept="image/*">
-        <button type="submit">Predict</button>
-    </form>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="file" name="image" accept="image/*">
+    <button type="submit">Predict</button>
+  </form>
 
-    {% if result %}
-        <h2>Result:</h2>
-        <p>{{ result }}</p>
-    {% endif %}
-
+  {% if result %}
+    <h3>Prediction Result:</h3>
+    <p>{{ result }}</p>
+  {% endif %}
 
   <!-- Footer -->
   <footer class="bg-light text-center mt-5 py-3">

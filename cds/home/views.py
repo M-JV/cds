@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.mail import send_mail
 from django.conf import settings
+from cancer.ml import predict_tumor
 
 
 def index(request):
@@ -27,11 +28,15 @@ def contact(request):
 def about(request):
     return render(request, 'home/about.html')
 
+
 def cancer(request):
     return render(request, 'home/cancer.html')
 
+
 def prediction(request):
+    if request.method == 'POST':
+        image = request.FILES['image']
+        result = predict_tumor(image)
+        return render(request, 'home/prediction.html', {'result': result})
+
     return render(request, 'home/prediction.html')
-
-
-
