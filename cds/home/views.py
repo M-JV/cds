@@ -2,11 +2,11 @@ from django.shortcuts import render
 from django.core.mail import send_mail
 from django.conf import settings
 from cancer.ml import predict_tumor
-
+from .forms import TumorDetectionForm
+from cancer.models import TrainingData
 
 def index(request):
     return render(request, 'home/index.html')
-
 
 def contact(request):
     if request.method == 'POST':
@@ -24,19 +24,26 @@ def contact(request):
 
     return render(request, 'home/contact.html')
 
-
 def about(request):
     return render(request, 'home/about.html')
 
-
 def cancer(request):
-    return render(request, 'home/cancer.html')
-
+    form = TumorDetectionForm()
+    return render(request, 'home/cancer.html', {'form': form})
 
 def prediction(request):
     if request.method == 'POST':
-        image = request.FILES['image']
-        result = predict_tumor(image)
-        return render(request, 'home/prediction.html', {'result': result})
+        form = TumorDetectionForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.cleaned_data['image']
+            result = predict_tumor(image)
 
-    return render(request, 'home/prediction.html')
+            # Add training data
+            training_data = TrainingData(image=image, result=result)
+            training_data.save()
+
+            return render(request, 'home/cancer.html', {'result': result})
+    else:
+        form = TumorDetectionForm()
+
+    return render(request, 'home/cancer.html', {'form': form})
