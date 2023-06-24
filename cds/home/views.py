@@ -27,5 +27,11 @@ def contact(request):
 def about(request):
     return render(request, 'home/about.html')
 
+def cancer(request):
+    return render(request, 'home/cancer.html')
+
+def prediction(request):
+    return render(request, 'home/prediction.html')
+
 
 
