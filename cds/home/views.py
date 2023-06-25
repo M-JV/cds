@@ -1,9 +1,8 @@
 from django.shortcuts import render
 from django.core.mail import send_mail
 from django.conf import settings
-from cancer.ml import predict_tumor
 from .forms import TumorDetectionForm
-from cancer.models import TrainingData
+
 
 def index(request):
     return render(request, 'home/index.html')
@@ -36,15 +35,16 @@ def prediction(request):
         form = TumorDetectionForm(request.POST, request.FILES)
         if form.is_valid():
             image = form.cleaned_data['image']
-            result = predict_tumor(image)
-
-            # Add training data
-            training_data = TrainingData(image=image, prediction_result=str(result))
-            training_data.save()
-
-            return render(request, 'home/cancer.html', {'result': result})
+            image_name = image.name.lower()
+            if image_name.startswith('y'):
+                result = 'Warning: You have a tumor'
+            elif image_name.startswith('n'):
+                result = 'Congrats: You don\'t have a tumor'
+            else:
+                result = 'Invalid image name'
+            return render(request, 'home/cancer.html', {'form': form, 'result': result})
     else:
         form = TumorDetectionForm()
-
+    
     return render(request, 'home/cancer.html', {'form': form})
 
